@@ -1,0 +1,58 @@
+---
+- name: Copy file to remote servers
+  hosts: all
+  become: true
+  vars:
+    # file_src: "/Users/manju/Downloads/upgrade-dbs/1.68.1_load/raniotNet"
+    # file_dest: "/opt/skylo/im/enb/binaries/1.68.1_load/"
+    # script_path: "/opt/skylo/im/enb/binaries/1.68.1_load/raniotNet"
+    # file_src: "/Users/manju/Downloads/Cloud/ni/ngcs-config/npa-preprod/prep.sh"
+    # file_dest: "/tmp/"
+    # script_path: "/tmp/prep.sh"
+    file_src: "/Users/manju/Downloads/upgrade-dbs/1.70.0/raniotNet"
+    file_dest: "/opt/skylo/im/enb/binaries/1.70.0_load/"
+    script_path: "/opt/skylo/im/enb/binaries/1.70.0_load/raniotNet"
+    systemd_service: raniot-im-launcher.service
+
+  tasks:
+    - name: Create target directory
+      file:
+        path: /opt/skylo/im/enb/binaries/1.70.0_load
+        state: directory
+        mode: '0755'
+        owner: raniot-im-launcher
+        group: raniot-im-launcher
+
+
+    - name: Copy file to remote servers
+      copy:
+        src: "{{ file_src }}"
+        dest: "{{ file_dest }}"
+      delegate_to: "{{ inventory_hostname }}"
+
+    - name: Ensure upgrade script is executable
+      file:
+        path: "{{ script_path }}"
+        mode: '0755'
+        state: file
+        owner: raniot-im-launcher
+        group: raniot-im-launcher
+
+    - name: Restart the raniot-im-launcher service
+      systemd:
+        name: "{{ systemd_service }}"
+        state: restarted
+
+  #   - name: Find all .sh files in the upgrade directory
+  #     find:
+  #       paths: "/home/skybase/upgrade"
+  #       patterns: "*.sh"
+  #       recurse: yes
+  #     register: sh_files
+
+    # - name: Set execute permission for all found .sh files
+    #   file:
+    #     path: "{{ item.path }}"
+    #     mode: '0755'
+    #   loop: "{{ sh_files.files }}"
+

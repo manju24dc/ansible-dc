@@ -1,0 +1,36 @@
+- name: Ping core nodes and get RTT from remote hosts
+  hosts: all
+  gather_facts: no
+  vars:
+    targets:
+      - core01.prod-eu.ntnyolks.space
+      - core01.prod-us.ntnyolks.space
+
+  tasks:
+    - name: Ping {{ item }} and capture RTT
+      shell: ping -c 4 -s 1200 {{ item }}
+      register: ping_result
+      loop: "{{ targets }}"
+      loop_control:
+        label: "{{ item }}"
+
+    - name: Extract RTT summary
+      set_fact:
+        rtt_results: >-
+          {{
+            rtt_results | default({}) | combine({
+              item.item: {
+                'rtt': ping_output.stdout_lines | select('search', 'rtt min/avg/max') | list | first | default('RTT info not found')
+              }
+            })
+          }}
+      loop: "{{ ping_result.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+      vars:
+        ping_output: "{{ item }}"
+
+    - name: Display RTT per host
+      debug:
+        msg: "From {{ inventory_hostname }} -> {{ item.value.rtt }}"
+      loop: "{{ rtt_results | dict2items }}"

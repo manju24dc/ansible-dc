@@ -1,0 +1,72 @@
+apiVersion: v1
+data:
+  prometheus.yml: "global:\n  scrape_interval: 60s\n  evaluation_interval: 60s\n  external_labels:\n
+    \   source_group: 'skylo-dmp-scef-prod'\n    cluster: 'eu-west3-dmp-scef-prod'\nrule_files:\n\nscrape_configs:\n
+    \ - job_name: 'node_exporter'\n    kubernetes_sd_configs:\n      - role: endpoints\n
+    \       namespaces:\n          names:\n          - 'oss-monitoring'\n    relabel_configs:\n
+    \   - source_labels: [__meta_kubernetes_endpoints_name]\n      regex: 'node-exporter'\n
+    \     action: keep\n    - source_labels: [__meta_kubernetes_pod_host_ip]\n      regex:
+    '(.+)'\n      target_label: instance\n      replacement: '$1:9100'\n\n  - job_name:
+    'rabbitmq_exporter'\n    kubernetes_sd_configs:\n      - role: endpoints\n    relabel_configs:\n
+    \   - source_labels: [__meta_kubernetes_endpoints_name]\n      regex: 'rabbitmq-prometheus'\n
+    \     action: keep\n    - source_labels: [__meta_kubernetes_pod_ip]\n      regex:
+    '(.+)'\n      target_label: instance\n      replacement: '$1:15692'\n\n  - job_name:
+    'kubernetes-apiservers'\n    kubernetes_sd_configs:\n    - role: endpoints\n    scheme:
+    https\n\n    tls_config:\n      ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt\n
+    \   bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token\n\n
+    \   relabel_configs:\n    - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_service_name,
+    __meta_kubernetes_endpoint_port_name]\n      action: keep\n      regex: default;kubernetes;https\n\n
+    \ - job_name: 'kubernetes-nodes'\n\n    scheme: https\n    tls_config:\n      ca_file:
+    /var/run/secrets/kubernetes.io/serviceaccount/ca.crt\n    bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token\n\n
+    \   kubernetes_sd_configs:\n    - role: node\n\n    relabel_configs:\n    - action:
+    labelmap\n      regex: __meta_kubernetes_node_label_(.+)\n    - target_label:
+    __address__\n      replacement: kubernetes.default.svc:443\n    - source_labels:
+    [__meta_kubernetes_node_name]\n      regex: (.+)\n      target_label: __metrics_path__\n
+    \     replacement: /api/v1/nodes/${1}/proxy/metrics \n  \n  - job_name: 'kubernetes-pods'\n
+    \   kubernetes_sd_configs:\n    - role: pod\n\n    relabel_configs:\n    - source_labels:
+    [__meta_kubernetes_pod_annotation_prometheus_io_scrape]\n      action: keep\n
+    \     regex: true\n    - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]\n
+    \     action: replace\n      target_label: __metrics_path__\n      regex: (.+)\n
+    \   - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]\n
+    \     action: replace\n      regex: ([^:]+)(?::\\d+)?;(\\d+)\n      replacement:
+    $1:$2\n      target_label: __address__\n    - action: labelmap\n      regex: __meta_kubernetes_pod_label_(.+)\n
+    \   - source_labels: [__meta_kubernetes_namespace]\n      action: replace\n      target_label:
+    kubernetes_namespace\n    - source_labels: [__meta_kubernetes_pod_name]\n      action:
+    replace\n      target_label: kubernetes_pod_name\n  \n  - job_name: 'kube-state-metrics'\n
+    \   static_configs:\n      - targets: ['kube-state-metrics.oss-monitoring:8080']\n\n
+    \ - job_name: 'kubernetes-cadvisor'\n    scheme: https\n\n    tls_config:\n      ca_file:
+    /var/run/secrets/kubernetes.io/serviceaccount/ca.crt\n    bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token\n
+    \   kubernetes_sd_configs:\n    - role: node\n\n    relabel_configs:\n    - action:
+    labelmap\n      regex: __meta_kubernetes_node_label_(.+)\n    - target_label:
+    __address__\n      replacement: kubernetes.default.svc:443\n    - source_labels:
+    [__meta_kubernetes_node_name]\n      regex: (.+)\n      target_label: __metrics_path__\n
+    \     replacement: /api/v1/nodes/${1}/proxy/metrics/cadvisor\n\nremote_write:\n
+    \ - url: \"http://10.220.0.20:8480/insert/0/prometheus/api/v1/write\"\n    remote_timeout:
+    30s\n    queue_config:\n      capacity: 10000\n      max_samples_per_send: 3000\n
+    \     batch_send_deadline: 10s\n      min_shards: 4\n      max_shards: 200\n      min_backoff:
+    100ms\n      max_backoff: 10s\n    write_relabel_configs:\n      - source_labels:
+    [__name__]\n        regex: 'go_.*'\n        action: drop"
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2023-01-18T12:40:19Z"
+  labels:
+    name: prometheus-server-conf
+  managedFields:
+  - apiVersion: v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:data:
+        .: {}
+        f:prometheus.yml: {}
+      f:metadata:
+        f:labels:
+          .: {}
+          f:name: {}
+    manager: kubectl-create
+    operation: Update
+    time: "2023-01-18T12:40:19Z"
+  name: prometheus-server-conf
+  namespace: oss-monitoring
+  resourceVersion: "7039554"
+  uid: 8c8b0351-90be-44dc-a8da-a6a75ff1a112
+

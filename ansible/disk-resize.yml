@@ -1,0 +1,18 @@
+---
+- name: Extend LVM and Resize Filesystem
+  hosts: all  # Reference the group from your inventory file
+  become: yes
+  tasks:
+    - name: Extend LVM Logical Volume
+      command: lvextend -l +100%FREE /dev/mapper/ubuntu--vg-ubuntu--lv
+      ignore_errors: yes  # Ignore errors if LV is already extended
+      register: vg_display
+
+    - name: Resize Filesystem
+      command: resize2fs -p /dev/mapper/ubuntu--vg-ubuntu--lv
+      #when: lvextend_output.rc == 0  # Only resize if LV was extended successfully
+
+    - name: Print Disk Usage
+      command: df -h
+
+

@@ -1,0 +1,133 @@
+obs:
+  hosts:
+
+    #done. OK
+    # NLV-OBS01-N1:
+    #     ansible_host: 192.168.0.114
+    #     ansible_user: skybase
+    #     ansible_connection: ssh
+    #     ansible_ssh_pass: skybase123
+    #     become_user: root
+    #     ansible_become_password: skybase123
+    #     kango_name: LAB-OBS01-N1
+
+    # Done. OK
+    # NLV-OBS01-N2:
+    #     ansible_host: 192.168.0.118
+    #     ansible_user: skybase
+    #     ansible_connection: ssh
+    #     ansible_ssh_pass: skybase123
+    #     become_user: root
+    #     ansible_become_password: skybase123
+    #     kango_name: LAB-OBS01-N2
+
+    # Done. OK
+    # NLV-OBS02-N1:
+    #     ansible_host: 192.168.0.121
+    #     ansible_user: skybase
+    #     ansible_connection: ssh
+    #     ansible_ssh_pass: skybase123
+    #     become_user: root
+    #     ansible_become_password: skybase123
+    #     kango_name: LAB-OBS01-N1
+
+    # Done. OK
+    # NLV-OBS02-N2:
+    #     ansible_host: 192.168.0.122
+    #     ansible_user: skybase
+    #     ansible_connection: ssh
+    #     ansible_ssh_pass: skybase123
+    #     become_user: root
+    #     ansible_become_password: skybase123
+    #     kango_name: LAB-OBS01-N2
+
+    # Done. 
+    # NLV-OBS03-N1:
+    #     ansible_host: 192.168.0.124
+    #     ansible_user: skybase
+    #     ansible_connection: ssh
+    #     ansible_ssh_pass: skybase123
+    #     become_user: root
+    #     ansible_become_password: skybase123
+    #     kango_name: LAB-OBS01-N1
+
+    # Done. 
+    NLV-OBS03-N2:
+        ansible_host: 192.168.0.123
+        ansible_user: skybase
+        ansible_connection: ssh
+        ansible_ssh_pass: skybase123
+        become_user: root
+        ansible_become_password: skybase123
+        kango_name: LAB-OBS01-N2
+
+    # Done. OK
+    # NLV-OBS04-N1:
+    #     ansible_host: 192.168.0.126
+    #     ansible_user: skybase
+    #     ansible_connection: ssh
+    #     ansible_ssh_pass: skybase123
+    #     become_user: root
+    #     ansible_become_password: skybase123
+    #     kango_name: LAB-OBS01-N1
+
+    # Done. OK
+    # NLV-OBS04-N2:
+    #     ansible_host: 192.168.0.127
+    #     ansible_user: skybase
+    #     ansible_connection: ssh
+    #     ansible_ssh_pass: skybase123
+    #     become_user: root
+    #     ansible_become_password: skybase123
+    #     kango_name: LAB-OBS01-N2
+
+    # Done. OK
+    # NLV-OBS05-N1:
+    #     ansible_host: 192.168.0.128
+    #     ansible_user: skybase
+    #     ansible_connection: ssh
+    #     ansible_ssh_pass: skybase123
+    #     become_user: root
+    #     ansible_become_password: skybase123
+    #     kango_name: LAB-OBS01-N1
+
+    # Done. OK
+    # NLV-OBS05-N2:
+    #     ansible_host: 192.168.0.129
+    #     ansible_user: skybase
+    #     ansible_connection: ssh
+    #     ansible_ssh_pass: skybase123
+    #     become_user: root
+    #     ansible_become_password: skybase123
+    #     kango_name: LAB-OBS01-N2
+
+    # Done. OK
+    # NLV-OBS06-N1:
+    #     ansible_host: 192.168.0.133
+    #     ansible_user: skybase
+    #     ansible_connection: ssh
+    #     ansible_ssh_pass: skybase123
+    #     become_user: root
+    #     ansible_become_password: skybase123
+    #     kango_name: LAB-OBS01-N1
+
+    # done. Not OK. SDR 1 & 2 and 3 & 4 USBs swapped
+    # NLV-OBS06-N2:
+    #     ansible_host: 192.168.0.134
+    #     ansible_user: skybase
+    #     ansible_connection: ssh
+    #     ansible_ssh_pass: skybase123
+    #     become_user: root
+    #     ansible_become_password: skybase123
+    #     kango_name: LAB-OBS01-N2
+    
+
+all:
+  vars:
+
+    ansible_ssh_common_args: '-o StrictHostKeyChecking=no'    
+    mcc: 901
+    mnc: 999
+    EMS: true #disable EMS
+    eNB_config_template: raniotNet_echostar_eu.conf
+    EMSRMQAddress: ems-rmq.dev.skylo.tech

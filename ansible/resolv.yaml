@@ -1,0 +1,30 @@
+---
+- name: Install resolvconf and configure nameservers
+  hosts: all
+  become: yes  # This enables sudo privilege escalation
+
+  tasks:
+    - name: Install resolvconf package
+      apt:
+        name: resolvconf
+        state: present
+      become: yes
+
+    - name: Create /etc/resolvconf/resolv.conf.d/head file
+      copy:
+        content: |
+          nameserver 8.8.8.8
+          nameserver 216.239.32.109
+        dest: /etc/resolvconf/resolv.conf.d/head
+      become: yes
+
+    - name: Update resolvconf
+      command: resolvconf -u
+      become: yes
+    
+    - name: Enable resolvconf service
+      systemd:
+        name: resolvconf
+        enabled: yes
+        state: started
+      become: yes

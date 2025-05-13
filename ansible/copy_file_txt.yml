@@ -1,0 +1,14 @@
+---
+- name: Copy file to remote servers
+  hosts: all
+  become: true
+  vars:
+    file_src: "/Users/manju/Downloads/summa/summa-hss-install-4.4.1.0-ENHANCEMENTS.sh"
+    file_dest: "/home/skybase/upgrade/"
+
+  tasks:
+    - name: Copy file to remote servers
+      copy:
+        src: "{{ file_src }}"
+        dest: "{{ file_dest }}"
+      delegate_to: "{{ inventory_hostname }}"

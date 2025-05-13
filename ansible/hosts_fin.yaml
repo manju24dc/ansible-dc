@@ -1,0 +1,49 @@
+obs:
+  hosts:
+
+    # FIN-R1-OBS01-N1:
+    #     ansible_host: 172.26.35.50
+    #     ansible_user: skybase
+    #     ansible_connection: ssh
+    #     ansible_ssh_pass: skybase123
+    #     become_user: root
+    #     ansible_become_password: skybase123
+    #     kango_name: LAB-OBS01-N1
+
+    # FIN-R1-OBS01-N2:
+    #     ansible_host: 172.26.35.52
+    #     ansible_user: skybase
+    #     ansible_connection: ssh
+    #     ansible_ssh_pass: skybase123
+    #     become_user: root
+    #     ansible_become_password: skybase123
+    #     kango_name: LAB-OBS01-N2
+
+    # FIN-R1-OBS02-N1:
+    #     ansible_host: 172.26.35.54
+    #     ansible_user: skybase
+    #     ansible_connection: ssh
+    #     ansible_ssh_pass: skybase123
+    #     become_user: root
+    #     ansible_become_password: skybase123
+    #     kango_name: LAB-OBS01-N1
+
+    FIN-R1-OBS02-N2:
+        ansible_host: 172.26.35.56
+        ansible_user: skybase
+        ansible_connection: ssh
+        ansible_ssh_pass: skybase123
+        become_user: root
+        ansible_become_password: skybase123
+        kango_name: LAB-OBS01-N2
+    
+
+all:
+  vars:
+
+    ansible_ssh_common_args: '-o StrictHostKeyChecking=no'    
+    mcc: 901
+    mnc: 999
+    EMS: true #disable EMS
+    eNB_config_template: raniotNet_echostar_eu.conf
+    EMSRMQAddress: ems-rmq.dev.skylo.tech

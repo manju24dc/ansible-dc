@@ -1,0 +1,27 @@
+---
+- name: Create DNS A records in Google Cloud DNS
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars:
+    project_id: "netops-netops-273620"
+    managed_zone: "netops-preprod"
+    dns_records:
+      - { name: "test1.preprod.skylo.tech.", ip: "172.26.35.10" }
+      - { name: "test2.preprod.skylo.tech.", ip: "172.26.35.11" }
+    
+
+  tasks:
+    - name: Create DNS A records
+      google.cloud.gcp_dns_resource_record_set:
+        project: "{{ project_id }}"
+        managed_zone: "{{ managed_zone }}"
+        name: "{{ item.name }}"
+        type: A
+        ttl: 300
+        rrdatas:
+          - "{{ item.ip }}"
+        state: present
+        auth_kind: application
+      loop: "{{ dns_records }}"

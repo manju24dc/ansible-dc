@@ -1,0 +1,31 @@
+- name: Run OS Prep
+  hosts: all
+  roles:
+    - {role: os_prep, become: yes}
+
+# - name: Set DNS
+#   hosts: all
+#   roles:
+#     - {role: gcp_dns, become: yes}
+#   become: yes
+
+- name: Setup UHD
+  hosts: all
+  roles:
+    - {role: uhd_driver, become: yes}
+  become: yes
+  become_method: sudo
+
+- name: Setup SCTP
+  hosts: all
+  roles:
+    - {role: libsctp, become: yes}
+  become: yes
+  become_method: sudo
+
+- name: Copy OBS Software & Config
+  hosts: all
+  roles:
+    - {role: obs, become: yes}
+  become: yes
+  become_method: sudo

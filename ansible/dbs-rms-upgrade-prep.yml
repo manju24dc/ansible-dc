@@ -1,0 +1,36 @@
+---
+- name: Run upgrade script with -y, patch config, and restart service
+  hosts: all
+  become: true
+  vars:
+    upgrade_script: /home/skybase/upgrade/rms-installer-standalone-3.0.0.sh
+    config_file: /opt/skylo/im/raniot-rms-launcher.json
+    systemd_service: raniot-rms-launcher.service
+    install_marker: /opt/skylo/rms/.install_done
+
+  tasks:
+    - name: Ensure script is executable
+      file:
+        path: "{{ upgrade_script }}"
+        mode: '0755'
+
+    - name: Check if installation is already done
+      stat:
+        path: "{{ install_marker }}"
+      register: install_status
+
+    - name: Execute the upgrade script with -y flag if not already installed
+      shell: "bash {{ upgrade_script }} -y && touch {{ install_marker }}"
+      when: not install_status.stat.exists
+      args:
+        executable: /bin/bash
+
+    - name: Pause for 5 seconds
+      pause:
+        seconds: 5
+
+    - name: Restart the raniot-rms-launcher service
+      systemd:
+        name: "{{ systemd_service }}"
+        state: restarted
+

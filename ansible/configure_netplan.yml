@@ -1,0 +1,20 @@
+---
+- name: Update netplan configuration for MTU size on specific interfaces
+  hosts: all
+  become: yes
+  tasks:
+    - name: Append MTU size for enp88s0 interface
+      lineinfile:
+        path: /etc/netplan/00-installer-config.yaml
+        line: "        mtu: 1400"
+        insertafter: '^    enp88s0:'
+        regexp: '^    enp88s0:'
+        state: present
+
+    - name: Append MTU size for enp89s0 interface
+      lineinfile:
+        path: /etc/netplan/00-installer-config.yaml
+        line: "        mtu: 1400"
+        insertafter: '^    enp89s0:'
+        regexp: '^    enp89s0:'
+        state: present

@@ -1,0 +1,28 @@
+---
+- name: Configure MTU Settings in dhclient.conf
+  hosts: all
+  become: yes
+  become_method: sudo
+  tasks:
+    - name: Create a backup of dhclient.conf
+      ansible.builtin.copy:
+        src: /etc/dhcp/dhclient.conf
+        dest: /home/skybase/dhclient.conf.bak
+        remote_src: true
+        mode: a+x
+        follow: yes
+
+    - name: Add MTU Configuration to dhclient.conf
+      ansible.builtin.lineinfile:
+        path: /etc/dhcp/dhclient.conf
+        insertafter: 'send host-name = gethostname\(\);'
+        line: |
+          default interface-mtu 1400;
+          supersede interface-mtu 1400;
+        backup: yes
+   
+    - name: Set MTU size for enp88s0
+      command: ip link set dev enp88s0 mtu 1400
+
+    - name: Set MTU size for enp89s0
+      command: ip link set dev enp89s0 mtu 1400

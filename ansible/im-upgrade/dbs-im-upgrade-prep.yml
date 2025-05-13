@@ -1,0 +1,42 @@
+---
+- name: Run upgrade script, patch config, and restart service
+  hosts: all
+  become: true
+  vars:
+    upgrade_script: /home/skybase/upgrade/im-installer-standalone-3.0.0.sh
+    config_file: /opt/skylo/im/raniot-im-launcher.json
+    systemd_service: raniot-im-launcher.service
+    install_marker: /opt/skylo/im/.install_done
+
+  tasks:
+    - name: Moving file to upgrade folder
+      copy:
+        src: im-installer-standalone-3.0.0.sh
+        dest: /home/skybase/upgrade/
+        owner: skybase
+        group: skybase
+        mode: 0755
+    - name: Ensure script is executable
+      file:
+        path: "{{ upgrade_script }}"
+        mode: '0755'
+
+    # - name: Check if installation is already done
+    #   stat:
+    #     path: "{{ install_marker }}"
+    #   register: install_status
+
+    - name: Execute the upgrade script 
+      shell: "bash {{ upgrade_script }} -y && touch {{ install_marker }}"
+      args:
+        executable: /bin/bash
+
+    - name: Pause for 10 seconds
+      pause:
+        seconds: 5
+
+    - name: Restart the raniot-im-launcher service
+      systemd:
+        name: "{{ systemd_service }}"
+        state: restarted
+

@@ -1,0 +1,35 @@
+- name: Install resolvconf and configure nameservers
+  hosts: all
+  become: yes  # This enables sudo privilege escalation
+
+  tasks:
+    - name: Install resolvconf package
+      apt:
+        name: resolvconf
+        state: present
+
+    - name: Create /etc/resolvconf/resolv.conf.d/head file
+      copy:
+        content: |
+          nameserver 8.8.8.8
+          nameserver 169.254.169.254
+        dest: /etc/resolvconf/resolv.conf.d/head
+
+    - name: Update resolvconf
+      command: resolvconf -u
+
+    - name: Enable resolvconf service
+      systemd:
+        name: resolvconf
+        enabled: yes
+        state: started
+
+    - name: Add entries to /etc/hosts
+      blockinfile:
+        path: /etc/hosts
+        block: |
+          10.85.0.2   core01.prod-us.ntnyolks.space
+          10.85.0.3   core02.prod-us.ntnyolks.space
+          10.105.0.2  core01.prod-eu.ntnyolks.space
+          10.105.0.3  core02.prod-eu.ntnyolks.space
+        marker: "# {mark} ANSIBLE MANAGED HOSTS BLOCK"

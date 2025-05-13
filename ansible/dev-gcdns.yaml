@@ -1,0 +1,35 @@
+---
+- name: Create DNS A records in Google Cloud DNS
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars:
+    project_id: "netops-273620"
+    managed_zone: "skylo-dev"
+
+  tasks:
+    - name: Create DNS A records
+      google.cloud.dns_record_set:
+        project: "{{ project_id }}"
+        managed_zone: "{{ managed_zone }}"
+        name: "{{ item.name }}"
+        type: A
+        ttl: 300
+        rrdatas: "{{ item.ip }}"
+        state: present
+      with_items:
+#        - { name: "host1.example.com.", ip: "192.168.3.10" }
+#        - { name: "host2.example.com.", ip: "192.168.3.11" }
+#        - { name: "host3.example.com.", ip: "192.168.3.12" }
+#        - { name: "host4.example.com.", ip: "192.168.3.13" }
+#        - { name: "host5.example.com.", ip: "192.168.3.14" }
+#        - { name: "host6.example.com.", ip: "192.168.3.15" }
+#        - { name: "host7.example.com.", ip: "192.168.3.16" }
+#        - { name: "host8.example.com.", ip: "192.168.3.17" }
+#        - { name: "host9.example.com.", ip: "192.168.3.18" }
+#        - { name: "host10.example.com.", ip: "192.168.3.19" }
+         - { name: "wkw-obs06-n1.ntnyolks.space.", ip: "192.168.3.20" }
+         - { name: "wkw-obs07-n1.ntnyolks.space.", ip: "192.168.3.21" }
+
+

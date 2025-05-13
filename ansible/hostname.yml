@@ -1,0 +1,33 @@
+#- name: "Server configuration"
+#  hosts: "all"
+#
+#  tasks:
+#
+#    - name: "Configure hostname"
+#      ansible.builtin.hostname:
+#        name: "NLV-1F3-OBS01-N1"
+#      become: true
+---
+- name: Update Ubuntu hostname
+  hosts: all
+  become: yes
+  gather_facts: yes
+
+  tasks:
+    - name: Update hostname
+      hostname:
+        name: "{{ new_hostname }}"
+      register: hostname_result
+
+    - name: Update hosts file
+      lineinfile:
+        dest: /etc/hosts
+        regexp: '^127.0.1.1'
+        line: "127.0.1.1 {{ new_hostname }}"
+     
+
+  vars_prompt:
+    - name: new_hostname
+      prompt: "Enter the new hostname: "
+
+
